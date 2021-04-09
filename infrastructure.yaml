@@ -1,0 +1,30 @@
+internal:
+  registry:
+    default: 'standard'
+    standard: 'http://api-echo.herokuapp.com'
+  reporter:
+    default: 'grafana'
+    grafana: 'http://reporter'
+  assets:
+    default: 'theia'
+    theia: 'http://assets'
+external:
+  registry:
+    default: 'standard'
+    standard: 'https://registry{{dns.governify}}'
+  reporter:
+    default: 'grafana'
+    grafana: 'https://reporter{{dns.governify}}'
+  assets:
+    default: 'theia'
+    theia: 'https://asset'
+  scopes:
+    default: 'theia'
+    theia: 'https://asset'
+  collector-events:
+    default: 'theia'
+    theia: 'https://asset'
+  
+dns:
+  governify: '.bluejay.governify.io'
+  default: governify

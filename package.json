@@ -1,0 +1,23 @@
+{
+  "name": "governify-commons",
+  "version": "1.4.0",
+  "description": "Governify Commons used for Governify microservices",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "governify",
+    "utils"
+  ],
+  "author": "isagroup",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "dotenv": "^8.2.0",
+    "js-yaml": "^4.0.0",
+    "lodash": "^4.17.21",
+    "mustache": "^4.2.0",
+    "yaml": "^1.10.2"
+  }
+}
