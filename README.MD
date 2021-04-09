@@ -9,8 +9,6 @@ Currently Governify-Commons implements the following:
 - A configuration manager compatible with local or external files
 - Utils function commonly used in all the microservices
 
-By default
-
 # Implementations
 
 The module should be initiated at the entrypoint of the service as soon as possible in the code with:
