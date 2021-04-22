@@ -6,21 +6,44 @@ const governify = require('./index');
 module.exports = {
     loadObjectFromFileOrURL: loadObjectFromFileOrURL,
     unfoldObject: unfoldObject,
-    getTextBetween: getTextBetween
+    getTextBetween: getTextBetween,
+    requireFromString: requireFromString,
+    requireFromFileOrURL: requireFromFileOrURL
 }
 
+async function requireFromFileOrURL(fileOrUrl, filename) {
+    let src = await loadObjectFromFileOrURL(fileOrUrl);
+    return requireFromString(src, filename);
+}
 
+async function requireFromString(src, filename) {
+    var Module = module.constructor;
+    var m = new Module();
+    m._compile(src, filename);
+    return m.exports;
+}
+
+//TODO: new methods to read only the content without parse as a object (for js and other files)
 async function loadObjectFromFileOrURL(fileOrURL) {
     let objectResult;
     try {
         if (fileOrURL.startsWith('http://') || fileOrURL.startsWith('https://')) {
             //URL Type
             let requestFile = await governify.httpClient.get(fileOrURL);
-            objectResult = YAML.parse(requestFile.data);
+            if (fileOrURL.endsWith('.yaml') || fileOrURL.endsWith('.yml')) {
+                objectResult = YAML.parse(requestFile.data)
+            } else {
+                objectResult = requestFile.data;
+            }
+
         } else {
             //File type
             let fileContent = await fs.readFileSync(fileOrURL, 'utf8')
-            objectResult = YAML.parse(fileContent);
+            if (fileOrURL.endsWith('.yaml') || fileOrURL.endsWith('.yml')) {
+                objectResult = YAML.parse(fileContent)
+            } else {
+                objectResult = fileContent;
+            }
         }
         return objectResult;
     } catch (error) {

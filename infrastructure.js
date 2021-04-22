@@ -1,17 +1,20 @@
 
 const governify = require('./index.js');
 const mustache = require('mustache');
-const _ = require('lodash')
+const _ = require('lodash');
+const { replace } = require('lodash');
 let infrastructure = {}
 
 module.exports = {
     loadServices: loadServices,
     getService: getService,
     getServiceURL: getServiceURL,
-    getServices: getServices
+    getServices: getServices,
+    getServicesReplacedDefaults: getServicesReplacedDefaults
 }
 
 // ====================== EXPOSED FUNCTIONS ===================
+//TODO: Implement api versioning also in the infrastructure managed by Governify-Commons
 async function loadServices() {
     //Load infrastructure from endpoint of env var specified or from the file.
     let infrastructureLocation = "./infrastructure.yaml";
@@ -38,8 +41,8 @@ function getService(service) {
         return {
 
             request: function (config) {
-                config.url = getServiceURL(service) + path;
-                return governify.httpClient.request(config)
+                config.url = getServiceURL(service) + config.url;
+                return governify.httpClient.request(config);
             },
             get: function (path, config = {}) {
                 return governify.httpClient.get(getServiceURL(service) + path, config)
@@ -68,6 +71,7 @@ function getService(service) {
             patch: function (path, data = {}, config = {}) {
                 return axios.patch(getServiceURL(service) + path, data, config)
             }
+         
         }
 
 
@@ -91,6 +95,12 @@ function getServiceURL(service) {
 
 function getServices() {
     return infrastructure;
+}
+
+function getServicesReplacedDefaults(){
+    let infrastructureClone = JSON.parse(JSON.stringify(infrastructure));
+    replaceObjectDefaults(infrastructureClone);
+    return infrastructureClone;
 }
 
 
