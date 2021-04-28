@@ -50,7 +50,7 @@ function getService(service) {
             },
 
             delete: function (path, config = {}) {
-                return governify.httpClient.deleteF(getServiceURL(service) + path, config)
+                return governify.httpClient.delete(getServiceURL(service) + path, config)
             },
 
             head: function (path, config = {}) {
