@@ -19,8 +19,8 @@ async function loadServices() {
     //Load infrastructure from endpoint of env var specified or from the file.
     let infrastructureLocation = "./infrastructure.yaml";
     if (process.env['GOV_INFRASTRUCTURE']) {
-        console.log('Loading infrastructure from Environment Variable (GOV_INFRASTRUCTURE) path: ', infrastructureLocation)
         infrastructureLocation = process.env['GOV_INFRASTRUCTURE'];
+        console.log('Loading infrastructure from Environment Variable (GOV_INFRASTRUCTURE) path: ', infrastructureLocation)
     }
     else {
         console.log('Loading infrastructure from default path:', infrastructureLocation)
@@ -31,8 +31,9 @@ async function loadServices() {
         infrastructure = JSON.parse(mustache.render(JSON.stringify(newInfrastructure), newInfrastructure));
         console.log('Successfully loaded infrastructure file')
     } catch (err) {
-        console.error('Infrastructure file/url not found or not valid: ', infrastructureLocation, ' ERROR: ', err)
+        return Promise.reject(err)
     }
+    return Promise.resolve(infrastructure)
 }
 
 function getService(service) {

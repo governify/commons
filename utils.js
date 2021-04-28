@@ -2,25 +2,25 @@
 const YAML = require('yaml');
 const fs = require('fs');
 const governify = require('./index');
+var requireFromString = require('require-from-string');
+
 
 module.exports = {
     loadObjectFromFileOrURL: loadObjectFromFileOrURL,
     unfoldObject: unfoldObject,
     getTextBetween: getTextBetween,
     requireFromString: requireFromString,
-    requireFromFileOrURL: requireFromFileOrURL
+    requireFromFileOrURL: requireFromFileOrURL,
+    sleepPromise: sleepPromise,
 }
 
-async function requireFromFileOrURL(fileOrUrl, filename) {
+async function sleepPromise(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function requireFromFileOrURL(fileOrUrl) {
     let src = await loadObjectFromFileOrURL(fileOrUrl);
-    return requireFromString(src, filename);
-}
-
-async function requireFromString(src, filename) {
-    var Module = module.constructor;
-    var m = new Module();
-    m._compile(src, filename);
-    return m.exports;
+    return requireFromString(src);
 }
 
 //TODO: new methods to read only the content without parse as a object (for js and other files)
