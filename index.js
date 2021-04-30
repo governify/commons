@@ -3,8 +3,9 @@ dotenv.config();
 const infrastructure = require('./infrastructure.js');
 const utils = require('./utils.js');
 const packageFile = require('./package.json');
-const httpClient = require('./httpClient')
-const configurator = require('./configurator')
+const httpClient = require('./httpClient');
+const configurator = require('./configurator');
+const middleware = require('./middleware');
 
 const maxRetries = 2;
 const timeoutRetry = 3000;
@@ -22,6 +23,7 @@ const init = async function (governifyConfiguration = {}) {
         }
         await infrastructure.loadServices();
         console.log('Governify module loaded correctly. Version: ', packageFile.version);
+        return middleware.mainMiddleware;
     } catch (err) {
         if (currentRetries < maxRetries) {
             currentRetries++;
@@ -32,6 +34,7 @@ const init = async function (governifyConfiguration = {}) {
         return Promise.reject(new Error('Maximum retries for Commons Init reached. Cannot load Governify Commons.'))
     }
 }
+
 
 module.exports.infrastructure = infrastructure;
 module.exports.utils = utils;
