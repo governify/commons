@@ -2,12 +2,12 @@ const axios = require('axios');
 const governify = require('./index');
 const fs = require('fs');
 
-module.exports.requestLoggingEnabled = (process.env['GOV_LOG_REQUESTS'] ? process.env['GOV_LOG_REQUESTS'] === 'true' : true);
+let requestLoggingEnabled = (process.env['GOV_LOG_REQUESTS'] ? process.env['GOV_LOG_REQUESTS'] === 'true' : true);
+
 const serviceName = JSON.parse(fs.readFileSync('./package.json')).name;
 
-
 function appendCommonsLog(logTag, method, URL, responseStatus) {
-    if (this.requestLoggingEnabled) {
+    if (requestLoggingEnabled) {
         axios.patch(governify.infrastructure.getServiceURL('internal.assets') + '/api/v1/public/logs/commons.log',
             { operation: 'append', content: '[' + logTag + '] ' + serviceName + ' => ' + '[' + method + ']' + ' => ' + URL  + ' => ' + responseStatus + '\n' }
         ).catch(); // Do not log catch to avoid logging in case assets is not deployed
@@ -122,3 +122,6 @@ module.exports.patch = async function patch(url, data = {}, config = {}) {
         throw err;
     });
 }
+
+module.exports.getRequestLogging = () => {return requestLoggingEnabled};
+module.exports.setRequestLogging = (value) => {requestLoggingEnabled = value};

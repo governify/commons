@@ -9,7 +9,7 @@ module.exports.mainMiddleware = async function mainMiddleware(req, res, next) {
         res.send({
             title: 'Governify Commons',
             version: package.version,
-            requestLogging: httpClient.requestLoggingEnabled ? 'true' : 'false',
+            requestLogging: httpClient.getRequestLogging() ? 'true' : 'false',
             serviceName: servicePackage.name,
             serviceVersion: servicePackage.version, 
         });
@@ -18,23 +18,23 @@ module.exports.mainMiddleware = async function mainMiddleware(req, res, next) {
     if (req.url.startsWith('/requestLogging')) {
             if (req.method === 'POST') {
                 if (req.url === '/requestLogging/enable') {
-                    httpClient.requestLoggingEnabled = true;
+                    httpClient.setRequestLogging(true);
                     res.send('Enabled')
                     return;
                 }
                 if (req.url === '/requestLogging/disable') {
-                    httpClient.requestLoggingEnabled = false;
+                    httpClient.setRequestLogging(false);
                     res.send('Disabled')
                     return;
                 }
                 if (req.url === '/requestLogging/swap') {
-                    httpClient.requestLoggingEnabled = !httpClient.requestLoggingEnabled;
-                    res.send(httpClient.requestLoggingEnabled ? 'Enabled' : 'Disabled');
+                    httpClient.setRequestLogging(!httpClient.getRequestLogging());
+                    res.send(httpClient.getRequestLogging() ? 'Enabled' : 'Disabled');
                     return;
                 }
             }
             if (req.method === 'GET') {
-                res.send(httpClient.requestLoggingEnabled ? 'Enabled' : 'Disabled');
+                res.send(httpClient.getRequestLogging() ? 'Enabled' : 'Disabled');
                 return;
             }
         }
