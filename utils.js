@@ -26,20 +26,17 @@ async function requireFromFileOrURL(fileOrUrl) {
 //TODO: new methods to read only the content without parse as a object (for js and other files)
 async function loadObjectFromFileOrURL(fileOrURL) {
     try {
-        let fileContent;
-
+        let result;
         if (fileOrURL.startsWith('http://') || fileOrURL.startsWith('https://')) {
             let requestFile = await governify.httpClient.get(fileOrURL);
-            fileContent = requestFile.data; 
+            result = requestFile.data; 
         } else {
-            fileContent = await fs.readFileSync(fileOrURL, 'utf8')
+            result = await fs.readFileSync(fileOrURL, 'utf8');
         }
-        let fileDataResult = fileContent;
         if (fileOrURL.endsWith('.yaml') || fileOrURL.endsWith('.yml')){
-            fileDataResult = YAML.parse(fileContent);
+            result = YAML.parse(result);
         }
-        return fileDataResult;
-
+        return result;
     } catch (error) {
         throw Error('Error requesting file from: ' + fileOrURL + ' ERROR: ' + error)
     }
