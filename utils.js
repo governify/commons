@@ -29,13 +29,13 @@ async function loadObjectFromFileOrURL(fileOrURL) {
         let result;
         if (fileOrURL.startsWith('http://') || fileOrURL.startsWith('https://')) {
             let requestFile = await governify.httpClient.get(fileOrURL);
-            result = requestFile.data; 
-        } else {
+            result = requestFile.data;
+        } else
             result = await fs.readFileSync(fileOrURL, 'utf8');
-        }
-        if (fileOrURL.endsWith('.yaml') || fileOrURL.endsWith('.yml')){
+
+        if (fileOrURL.endsWith('.yaml') || fileOrURL.endsWith('.yml'))
             result = YAML.parse(result);
-        }
+
         return result;
     } catch (error) {
         throw Error('Error requesting file from: ' + fileOrURL + ' ERROR: ' + error)
