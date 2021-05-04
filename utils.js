@@ -25,32 +25,26 @@ async function requireFromFileOrURL(fileOrUrl) {
 
 //TODO: new methods to read only the content without parse as a object (for js and other files)
 async function loadObjectFromFileOrURL(fileOrURL) {
-    let objectResult;
     try {
-        if (fileOrURL.startsWith('http://') || fileOrURL.startsWith('https://')) {
-            //URL Type
-            let requestFile = await governify.httpClient.get(fileOrURL);
-            if (fileOrURL.endsWith('.yaml') || fileOrURL.endsWith('.yml')) {
-                objectResult = YAML.parse(requestFile.data)
-            } else {
-                objectResult = requestFile.data;
-            }
+        let fileContent;
 
+        if (fileOrURL.startsWith('http://') || fileOrURL.startsWith('https://')) {
+            let requestFile = await governify.httpClient.get(fileOrURL);
+            fileContent = requestFile.data; 
         } else {
-            //File type
-            let fileContent = await fs.readFileSync(fileOrURL, 'utf8')
-            if (fileOrURL.endsWith('.yaml') || fileOrURL.endsWith('.yml')) {
-                objectResult = YAML.parse(fileContent)
-            } else {
-                objectResult = fileContent;
-            }
+            fileContent = await fs.readFileSync(fileOrURL, 'utf8')
         }
-        return objectResult;
+        let fileDataResult = fileContent;
+        if (fileOrURL.endsWith('.yaml') || fileOrURL.endsWith('.yml')){
+            fileDataResult = YAML.parse(fileContent);
+        }
+        return fileDataResult;
+
     } catch (error) {
         throw Error('Error requesting file from: ' + fileOrURL + ' ERROR: ' + error)
     }
-
 }
+
 
 // function getPropertyFromString(object, property) {
 //     let propertyResult = property.split('.').reduce(function (p, prop) { return p[prop] }, object);
