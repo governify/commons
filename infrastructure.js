@@ -2,7 +2,6 @@
 const governify = require('./index.js');
 const mustache = require('mustache');
 const _ = require('lodash');
-const { replace } = require('lodash');
 let infrastructure = {}
 
 module.exports = {
@@ -38,7 +37,7 @@ async function loadServices() {
 
 function getService(service) {
     //Services are stored in process.env environment variables 
-    try {
+    
         return {
 
             request: function (config) {
@@ -70,17 +69,11 @@ function getService(service) {
             },
 
             patch: function (path, data = {}, config = {}) {
-                return axios.patch(getServiceURL(service) + path, data, config)
+                return governify.httpClient.patch(getServiceURL(service) + path, data, config)
             }
          
         }
 
-
-
-    } catch (err) {
-        console.error('Failed loading service: ', service)
-        return null;
-    }
 }
 
 function getServiceURL(service) {

@@ -4,7 +4,7 @@ const package = require('./package.json');
 const fs = require('fs');
 let servicePackage = JSON.parse(fs.readFileSync('./package.json'));
 
-module.exports.mainMiddleware = async function mainMiddleware(req, res, next) {
+module.exports.mainMiddleware = async function mainMiddleware(req, res) {
     if (req.url === '/') {
         res.send({
             title: 'Governify Commons',

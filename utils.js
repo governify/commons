@@ -67,14 +67,14 @@ function getTextBetween(text, betweenStart, betweenEnd) {
     let init = text.indexOf(betweenStart);
     let end = text.indexOf(betweenEnd);
     if (init != -1 && end != -1 && init < end) {
-        return text.substr(init + 1, fin - init - 1);
+        return text.substr(init + 1, end - init - 1);
     } else {
         return null;
     }
 }
 
 //Unfold a object to only 1 level variables
-function unfoldObject(object) {
+function unfoldObject(input) {
     function flatten(obj) {
         var result = {},
             f,
@@ -102,5 +102,5 @@ function unfoldObject(object) {
         return result;
     } //flatten
     var output = [];
-    return flatten(input);;
+    return flatten(input);
 } //unfold

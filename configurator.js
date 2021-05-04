@@ -1,5 +1,4 @@
 const governify = require('./index');
-const yaml = require('yaml');
 const _ = require('lodash');
 
 let configs = {};
@@ -9,8 +8,6 @@ module.exports.loadConfig = loadConfig;
 module.exports.getConfig = getConfig;
 
 async function loadConfig(name, location, isDefault) {
-
-
     let newConfig = await governify.utils.loadObjectFromFileOrURL(location);
     //Get all replacements for the config from env vars
     Object.keys(process.env).filter(envVarKey => {
@@ -19,15 +16,12 @@ async function loadConfig(name, location, isDefault) {
         _.set(newConfig, envVarKey.replace('GOV_CONFIG_' + name + '_', '').replace(/_/g, '.'), process.env[envVarKey]);
     });
 
-
     //Store config
     configs[name] = newConfig;
     if (isDefault) {
         defaultConfig = name;
     }
-
     return newConfig;
-
 }
 
 
