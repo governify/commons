@@ -24,7 +24,6 @@ function baseMiddleware(req, res) {
         return;
     }
     res.status(400).send('Method not implemented')
-    return;
 }
 
 async function infrastructureMiddleware(req, res) {
@@ -39,26 +38,30 @@ async function infrastructureMiddleware(req, res) {
             return;
         }
     }
+    res.status(400).send('Method not implemented')
 }
 
 async function requestLoggingMiddleware(req, res) {
     if (req.method === 'POST') {
-        if (req.url === '/requestLogging/enable') {
+        if (req.url === '/enable') {
             httpClient.setRequestLogging(true);
-            res.send('Enabled')
+            res.send('Enabled');
         }
-        else if (req.url === '/requestLogging/disable') {
+        else if (req.url === '/disable') {
             httpClient.setRequestLogging(false);
-            res.send('Disabled')
+            res.send('Disabled');
         }
-        else if (req.url === '/requestLogging/swap') {
+        else if (req.url === '/swap') {
             httpClient.setRequestLogging(!httpClient.getRequestLogging());
             res.send(httpClient.getRequestLogging() ? 'Enabled' : 'Disabled');
-        }
-        return;
+        } else
+            res.status(400).send('Method not implemented');
     }
-    if (req.method === 'GET') {
+    else if (req.method === 'GET') {
         res.send(httpClient.getRequestLogging() ? 'Enabled' : 'Disabled');
-        return;
     }
+    else {
+        res.status(400).send('Method not implemented');
+    }
+
 }

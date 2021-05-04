@@ -15,12 +15,7 @@ let currentRetries = 0;
 const init = async function (governifyConfiguration = {}) {
     if(currentRetries === 0) console.log('Starting Governify-Commons...')
     try {
-        if (governifyConfiguration.configurations) {
-            await Promise.all(governifyConfiguration.configurations.map(function (config) {
-                console.log('Loading configuration: ', config.name);
-                return configurator.loadConfig(config.name, config.location, config.default);
-            }))
-        }
+        await loadConfigurations(governifyConfiguration.configurations);
         await infrastructure.loadServices();
         console.log('Governify module loaded correctly. Version: ', packageFile.version);
         return middleware.mainMiddleware;
@@ -35,6 +30,14 @@ const init = async function (governifyConfiguration = {}) {
     }
 }
 
+async function loadConfigurations(configurations){
+    if (configurations){
+        await Promise.all(configurations.map(function (config) {
+            console.log('Loading configuration: ', config.name);
+            return configurator.loadConfig(config.name, config.location, config.default);
+        }))
+    }
+}
 
 module.exports.infrastructure = infrastructure;
 module.exports.utils = utils;
