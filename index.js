@@ -7,7 +7,7 @@ const httpClient = require('./httpClient');
 const configurator = require('./configurator');
 const middleware = require('./middleware');
 
-const maxRetries = 2;
+const maxRetries = 10;
 const timeoutRetry = 3000;
 let currentRetries = 0;
 
