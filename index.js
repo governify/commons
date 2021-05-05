@@ -11,6 +11,7 @@ const maxRetries = 10;
 const timeoutRetry = 3000;
 let currentRetries = 0;
 
+let isReady = false;
 
 const init = async function (governifyConfiguration = {}) {
     if(currentRetries === 0) console.log('Starting Governify-Commons...')
@@ -18,6 +19,7 @@ const init = async function (governifyConfiguration = {}) {
         await loadConfigurations(governifyConfiguration.configurations);
         await infrastructure.loadServices();
         console.log('Governify module loaded correctly. Version: ', packageFile.version);
+        isReady = true;
         return middleware.mainMiddleware;
     } catch (err) {
         if (currentRetries < maxRetries) {
@@ -44,3 +46,4 @@ module.exports.utils = utils;
 module.exports.httpClient = httpClient;
 module.exports.configurator = configurator;
 module.exports.init = init;
+module.export.isReady = () => { return isReady };
