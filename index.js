@@ -46,4 +46,4 @@ module.exports.utils = utils;
 module.exports.httpClient = httpClient;
 module.exports.configurator = configurator;
 module.exports.init = init;
-module.export.isReady = () => { return isReady };
+module.exports.isReady = () => { return isReady };
