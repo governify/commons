@@ -1,4 +1,5 @@
 # Governify-Commons
+[![NPM](https://nodei.co/npm/governify-commons.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/governify-commons/)
 
 This module is intended for use in all microservices of Governify infrastructure.
 It allows for abstract the functions that are mostly used in the code, to have a better control and parametrize the functions call.
