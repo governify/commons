@@ -7,7 +7,7 @@ let requestLoggingEnabled = (process.env['GOV_LOG_REQUESTS'] ? process.env['GOV_
 const serviceName = JSON.parse(fs.readFileSync('./package.json')).name;
 
 function appendCommonsLog(logTag, method, URL, responseStatus) {
-    if (requestLoggingEnabled) {
+    if (requestLoggingEnabled && governify.isReady()) {
         axios.patch(governify.infrastructure.getServiceURL('internal.assets') + '/api/v1/public/logs/commons.log',
             { operation: 'append', content: '[' + logTag + '] ' + serviceName + ' => ' + '[' + method + ']' + ' => ' + URL  + ' => ' + responseStatus + '\n' }
         ).catch(); // Do not log catch to avoid logging in case assets is not deployed
