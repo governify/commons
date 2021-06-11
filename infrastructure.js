@@ -1,6 +1,7 @@
 
 const governify = require('./index.js');
 const mustache = require('mustache');
+const logger = governify.getLogger();
 const _ = require('lodash');
 let infrastructure = {}
 
@@ -19,16 +20,16 @@ async function loadServices() {
     let infrastructureLocation = "./infrastructure.yaml";
     if (process.env['GOV_INFRASTRUCTURE']) {
         infrastructureLocation = process.env['GOV_INFRASTRUCTURE'];
-        console.log('Loading infrastructure from Environment Variable (GOV_INFRASTRUCTURE) path: ', infrastructureLocation)
+        logger.info('Loading infrastructure from Environment Variable (GOV_INFRASTRUCTURE) path: ', infrastructureLocation)
     }
     else {
-        console.log('Loading infrastructure from default path:', infrastructureLocation)
+        logger.info('Loading infrastructure from default path:', infrastructureLocation)
     }
     try {
         let newInfrastructure = await governify.utils.loadObjectFromFileOrURL(infrastructureLocation);
         replaceObjectDefaults(newInfrastructure);
         infrastructure = JSON.parse(mustache.render(JSON.stringify(newInfrastructure), newInfrastructure));
-        console.log('Successfully loaded infrastructure file')
+        logger.info('Successfully loaded infrastructure file')
     } catch (err) {
         return Promise.reject(err)
     }
@@ -81,7 +82,7 @@ function getServiceURL(service) {
         let url = _.get(infrastructure, service);
         return typeof url === 'string' ? url : url.default; //Get default value if the url is a object
     } catch (err) {
-        console.error('Failed loading serviceURL: ', service, ' ERROR:', err)
+        logger.error('Failed loading serviceURL: ', service, ' ERROR:', err)
         return null;
     }
 }

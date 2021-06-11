@@ -4,13 +4,18 @@ const package = require('./package.json');
 const fs = require('fs');
 let servicePackage = JSON.parse(fs.readFileSync('./package.json'));
 const express = require('express');
+const tracer = require('./tracer');
+const governify = require('./index');
+const logger = governify.getLogger();
 let mainMiddleware = express.Router();
 
 module.exports.mainMiddleware = mainMiddleware;
 
-mainMiddleware.use('/requestLogging', requestLoggingMiddleware);
-mainMiddleware.use('/infrastructure', infrastructureMiddleware);
-mainMiddleware.use('/', baseMiddleware);
+mainMiddleware.use(tracer.middlewareTracer)
+mainMiddleware.use('/commons/requestLogging', requestLoggingMiddleware);
+mainMiddleware.use('/commons/infrastructure', infrastructureMiddleware);
+mainMiddleware.use('/commons', baseMiddleware);
+
 
 function baseMiddleware(req, res) {
     if (req.url === '/') {
@@ -32,7 +37,7 @@ async function infrastructureMiddleware(req, res) {
             await infrastructure.loadServices().then(infrastructure => {
                 res.send('Updated infrastructure: ' + JSON.stringify(infrastructure))
             }).catch(err => {
-                console.error('Internal error reloading infrastructure');
+                logger.fatal('Internal error reloading infrastructure');
                 res.send('Internal error reloading infrastructure, please reload this service: ' + err.message);
             });
             return;

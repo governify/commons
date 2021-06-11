@@ -3,6 +3,7 @@ const YAML = require('yaml');
 const fs = require('fs');
 const governify = require('./index');
 var requireFromString = require('require-from-string');
+const package = JSON.parse(fs.readFileSync('./package.json'));
 
 
 module.exports = {
@@ -12,6 +13,11 @@ module.exports = {
     requireFromString: requireFromString,
     requireFromFileOrURL: requireFromFileOrURL,
     sleepPromise: sleepPromise,
+    getServiceName: getServiceName
+}
+
+function getServiceName(){
+   return package.name
 }
 
 async function sleepPromise(ms) {
