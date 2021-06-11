@@ -1,7 +1,7 @@
 
 const governify = require('./index.js');
 const mustache = require('mustache');
-const logger = governify.getLogger();
+const logger = governify.getLogger().tag('commons');
 const _ = require('lodash');
 let infrastructure = {}
 

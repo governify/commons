@@ -1,7 +1,7 @@
 const axios = require('axios');
 const governify = require('./index');
 const utils = require('./utils');
-const logger = governify.getLogger().tag(["HTTPRequest", "Commons"]);
+const logger = governify.getLogger().tag(["commons", "http-request"]);
 
 let requestLoggingEnabled = (process.env['GOV_LOG_REQUESTS'] ? process.env['GOV_LOG_REQUESTS'] === 'true' : true);
 
