@@ -1,12 +1,13 @@
 {
   "name": "governify-commons",
-  "version": "1.9.8",
+  "version": "1.13.0",
   "description": "Governify Commons used for Governify microservices",
   "main": "index.js",
   "scripts": {
     "test": "mocha --timeout 20000",
     "coverage": "nyc --reporter=lcov npm run test",
-    "cov": "nyc npm run test"
+    "cov": "nyc npm run test",
+    "up": "npm version minor --git-tag-version false && npm publish"
   },
   "keywords": [
     "governify",

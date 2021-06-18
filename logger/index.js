@@ -20,22 +20,37 @@ Logger.prototype.addPermanentTags = function(tags){
 }
 
 Logger.prototype.debug = function(...msg){
+    if (LogLevel.DEBUG < logConfig.level){
+        return;
+    }
     console.debug(this.getMessageFormatted(LogType.DEBUG, ...msg))
 }
 
 Logger.prototype.info = function(...msg) {
+    if (LogLevel.INFO < logConfig.level){
+        return;
+    }
     console.info(this.getMessageFormatted(LogType.INFO, ...msg))
 }
 
 Logger.prototype.error = function(...msg) {
+    if (LogLevel.ERROR < logConfig.level){
+        return;
+    }
     console.error(this.getMessageFormatted(LogType.ERROR, ...msg))
 }
 
 Logger.prototype.warn = function(...msg) {
+    if (LogLevel.WARN < logConfig.level){
+        return;
+    }
     console.warn(this.getMessageFormatted(LogType.WARN, ...msg))
 }
 
 Logger.prototype.fatal = function(...msg) {
+    if (LogLevel.FATAL < logConfig.level){
+        return;
+    }
     console.error(this.getMessageFormatted(LogType.FATAL, ...msg))
 }
 
@@ -77,11 +92,14 @@ const Theme = {
     DEFAULT: chalk.white()
 }
 
-let logConfig = {
-    type: true,
-    tracing: true,
-    timestamp: true,
-    tags: true,
+
+
+function getLogConfig(){
+    return logConfig;
+}
+
+function setLogConfig(newConfig){
+    logConfig = newConfig;
 }
 
 const LogType = {
@@ -90,6 +108,21 @@ const LogType = {
     ERROR: "error",
     WARN: "warn",
     FATAL: "FATAL",
+}
+const LogLevel = {
+    DEBUG: 1,
+    INFO: 2,
+    WARN: 3,
+    ERROR: 4,
+    FATAL: 5,
+}
+
+let logConfig = {
+    type: true,
+    tracing: true,
+    timestamp: true,
+    tags: true,
+    level: LogLevel.DEBUG
 }
 
 function coloredTraceId() {
@@ -115,3 +148,5 @@ function coloredType(type) {
 
 
 module.exports = Logger;
+module.exports.getLogConfig = getLogConfig;
+module.exports.setLogConfig = setLogConfig;

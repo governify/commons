@@ -7,6 +7,7 @@ const express = require('express');
 const tracer = require('./tracer');
 const governify = require('./index');
 const logger = governify.getLogger();
+const logClass = require('./logger');
 let mainMiddleware = express.Router();
 
 module.exports.mainMiddleware = mainMiddleware;
@@ -14,6 +15,7 @@ module.exports.mainMiddleware = mainMiddleware;
 mainMiddleware.use(tracer.middlewareTracer)
 mainMiddleware.use('/commons/requestLogging', requestLoggingMiddleware);
 mainMiddleware.use('/commons/infrastructure', infrastructureMiddleware);
+mainMiddleware.use('/commons/logger', loggerMiddleware);
 mainMiddleware.use('/commons', baseMiddleware);
 
 
@@ -68,5 +70,23 @@ async function requestLoggingMiddleware(req, res) {
     else {
         res.status(400).send('Method not implemented');
     }
+}
 
+async function loggerMiddleware(req, res) {
+    if (req.method === 'POST') {
+        if (req.url === '/config') {
+            logClass.setLogConfig(req.body);
+            res.send('Updated');
+        } else
+            res.status(400).send('Method not implemented');
+    }
+    else if (req.method === 'GET') {
+        if (req.url === '/config') {
+            res.send(logClass.getLogConfig());
+        } else
+            res.status(400).send('Method not implemented');
+    }
+    else {
+        res.status(400).send('Method not implemented');
+    }
 }
