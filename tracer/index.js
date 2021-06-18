@@ -30,5 +30,5 @@ module.exports.getCurrentTraceId = function () {
 }
 
 module.exports.getCurrentTraceShortId = function () {
-  return this.getCurrentTraceId()?.substring(0, 5);
+  return this.getCurrentTraceId() && this.getCurrentTraceId().substring(0, 5);
 }
