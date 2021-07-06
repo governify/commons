@@ -28,6 +28,8 @@
     "mustache": "^4.2.0",
     "require-from-string": "^2.0.2",
     "supports-color": "^7.1.0",
+    "winston": "^3.3.3",
+    "winston-daily-rotate-file": "^4.5.5",
     "yaml": "^1.10.2"
   },
   "devDependencies": {
