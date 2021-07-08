@@ -1,15 +1,57 @@
 const chalk = require('chalk');
 const governify = require('../index');
-
+const { createLogger, format, transports } = require('winston');
+const { combine, timestamp, printf  } = format;
+require('winston-daily-rotate-file');
 
 function Logger(tags = []) {
     this.tags = tags || [];
 }
 
+const myFormat = printf(({ level, message, tracing, label, timestamp }) => {
+    return `${JSON.stringify({date: timestamp, level: level,trace: tracing, labels: label, msg: message})}`;
+  });
+
 const cloneInstance = (logger) =>{
     return new Logger([...logger.tags]); //Clone the array to let the original unmodified
 }
 
+const LogType = {
+    INFO: "info",
+    DEBUG: "debug",
+    ERROR: "error",
+    WARN: "warn",
+    FATAL: "FATAL",
+}
+const LogLevel = {
+    DEBUG: 1,
+    INFO: 2,
+    WARN: 3,
+    ERROR: 4,
+    FATAL: 5,
+}
+
+let logConfig = {
+    type: true,
+    tracing: true,
+    timestamp: true,
+    tags: true,
+    level: LogLevel.DEBUG,
+    storage: {
+        active: false,
+        level: LogLevel.DEBUG
+    }
+}
+
+let sizeMaxMB = 100;
+let nFiles = 15;
+
+const fileLogger = createLogger({
+    format: combine(
+        timestamp(),
+        myFormat
+      )
+  });
 
 Logger.prototype.addPermanentTags = function(tags){
     if (!(tags instanceof Array)){
@@ -20,6 +62,10 @@ Logger.prototype.addPermanentTags = function(tags){
 }
 
 Logger.prototype.debug = function(...msg){
+
+    if (logConfig.storage.active && LogLevel.DEBUG >= logConfig.storage.level){ 
+        fileLogger.debug(this.getWinstonMessage(...msg));
+    }
     if (LogLevel.DEBUG < logConfig.level){
         return;
     }
@@ -27,6 +73,10 @@ Logger.prototype.debug = function(...msg){
 }
 
 Logger.prototype.info = function(...msg) {
+
+    if (logConfig.storage.active && LogLevel.INFO >= logConfig.storage.level){ 
+        fileLogger.info(this.getWinstonMessage(...msg));
+    }
     if (LogLevel.INFO < logConfig.level){
         return;
     }
@@ -34,6 +84,10 @@ Logger.prototype.info = function(...msg) {
 }
 
 Logger.prototype.error = function(...msg) {
+
+    if (logConfig.storage.active && LogLevel.ERROR >= logConfig.storage.level){ 
+        fileLogger.error(this.getWinstonMessage(...msg));
+    }
     if (LogLevel.ERROR < logConfig.level){
         return;
     }
@@ -41,6 +95,10 @@ Logger.prototype.error = function(...msg) {
 }
 
 Logger.prototype.warn = function(...msg) {
+
+    if (logConfig.storage.active && LogLevel.WARN >= logConfig.storage.level){ 
+        fileLogger.warn(this.getWinstonMessage(...msg));
+    }
     if (LogLevel.WARN < logConfig.level){
         return;
     }
@@ -48,6 +106,10 @@ Logger.prototype.warn = function(...msg) {
 }
 
 Logger.prototype.fatal = function(...msg) {
+
+    if (logConfig.storage.active && LogLevel.FATAL >= logConfig.storage.level){ 
+        fileLogger.error(this.getWinstonMessage(...msg));
+    }
     if (LogLevel.FATAL < logConfig.level){
         return;
     }
@@ -99,31 +161,23 @@ function getLogConfig(){
 }
 
 function setLogConfig(newConfig){
+
+    if((newConfig.storage.active &&  newConfig.storage.active !== logConfig.storage.active)){
+        fileLogger.clear();
+        const files = new transports.DailyRotateFile({
+            filename: 'logs-%DATE%.log',
+            dirname:'./logs',
+            datePattern: 'YYYY-MM-DD',
+            maxSize:sizeMaxMB + 'm', 
+            maxFiles:nFiles, 
+            level:'debug'
+            });
+        fileLogger.add(files); 
+    }
+
     logConfig = newConfig;
 }
 
-const LogType = {
-    INFO: "info",
-    DEBUG: "debug",
-    ERROR: "error",
-    WARN: "warn",
-    FATAL: "FATAL",
-}
-const LogLevel = {
-    DEBUG: 1,
-    INFO: 2,
-    WARN: 3,
-    ERROR: 4,
-    FATAL: 5,
-}
-
-let logConfig = {
-    type: true,
-    tracing: true,
-    timestamp: true,
-    tags: true,
-    level: LogLevel.DEBUG
-}
 
 function coloredTraceId() {
     return Theme.TRACEID("[" + governify.tracer.getCurrentTraceShortId() + "] ");
@@ -146,6 +200,9 @@ function coloredType(type) {
     }
 }
 
+Logger.prototype.getWinstonMessage = function (...msg) {
+    return {label:this.tags,tracing:governify.tracer.getCurrentTraceShortId(),message:msg.toString()}
+}
 
 module.exports = Logger;
 module.exports.getLogConfig = getLogConfig;
