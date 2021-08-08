@@ -9,21 +9,28 @@ const governify = require('./index');
 const logger = governify.getLogger();
 const logClass = require('./logger');
 let mainMiddleware = express.Router();
+let authKey = governify.getService('internal.registry')
 
 module.exports.mainMiddleware = mainMiddleware;
 
 mainMiddleware.use(tracer.middlewareTracer)
-//mainMiddleware.use(authMiddleware)
+mainMiddleware.use(authMiddleware)
 mainMiddleware.use('/commons/requestLogging', requestLoggingMiddleware);
 mainMiddleware.use('/commons/infrastructure', infrastructureMiddleware);
 mainMiddleware.use('/commons/logger', loggerMiddleware);
 mainMiddleware.use('/commons', baseMiddleware);
 
 
+
 function authMiddleware(req, res, next) {
     let commonsConfig = governify.configurator.getConfig("commons")
     if (commonsConfig.auth) {
-
+        if (commonsConfig.authKey == req.get('Commons-Authentication')){
+            next()
+        }
+        else {
+            res.status(403).send('Invalid authentication header (Commons-Authentication)')
+        }
     } else {
         next()
     }

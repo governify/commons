@@ -1,0 +1,17 @@
+users:
+  - name: 'infrastructure-admin'
+    credentials:
+      user: '$_[auth.infrastructureUser]'
+      pass: '$_[auth.infrastructurePass]'
+    permissions:
+      rulesets:
+        - 'all'
+rulesets:
+  - name: 'all'
+    permissions:
+      rulesets:
+      custom:
+        allow:
+          - method: '.*'
+            url: '.*'
+        deny:
