@@ -11,6 +11,7 @@ const configurator = require('./configurator');
 const middleware = require('./middleware');
 const logger = new loggerClass().tag("commons");
 const tracer = require('./tracer');
+const periods = require('./periods');
 
 
 const maxRetries = 10;
@@ -56,4 +57,4 @@ module.exports.configurator = configurator;
 module.exports.init = init;
 module.exports.isReady = () => { return isReady };
 module.exports.tracer = tracer;
-
+module.exports.periods = periods;
