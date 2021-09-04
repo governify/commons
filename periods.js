@@ -59,6 +59,7 @@ function getTimeZoneOffset(date, timeZone) {
  **/
 module.exports.getPeriods = function getPeriods(dates, timeZone, filter, Wfrom, Wto) {
     let periods = [];
+
     for (var i = 0; i < dates.length - 1; i += 2) {
         dates[i + 1].setMilliseconds(999)
         dates[i].setUTCHours(dates[i].getUTCHours() + getTimeZoneOffset(dates[i], timeZone))
@@ -77,6 +78,16 @@ module.exports.getPeriods = function getPeriods(dates, timeZone, filter, Wfrom, 
             });
         }
     }
+
+    if (dates.length !== 0 && !filter) {
+        var lastDate = dates[dates.length - 1]
+        lastDate.setUTCHours(lastDate.getUTCHours() + getTimeZoneOffset(lastDate, timeZone))
+        periods.push({
+            from: lastDate.toISOString(),
+            to: new Date().toISOString()
+        });
+    }
+
     return periods;
 }
 
