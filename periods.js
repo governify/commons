@@ -120,15 +120,18 @@ module.exports.getDates = function getDates(from, to, period, Wto) {
         rruleSet.rrule(rruleInit);
         rruleSet.rrule(rruleFin);
         var dates = rruleSet.all();
-    } else {
-        let rules = period.split("---");
-        let initPeriodRule = rrulestr(rules[0]);
-        let endPeriodRule = rrulestr(rules[1]);
+    } else if (period === "customRules") {
+        let rulesArr = rules.split("---");
+        const until = ";UNTIL=" + Wto.toISOString().replace(/\./g, "").replace(/\-/g, "").replace(/\:/g, "").substring(0, 15) + "Z"
+        rulesArr[0] = rulesArr[0] + until
+        rulesArr[1] = rulesArr[1] + until
+        let initPeriodRule = rrulestr(rulesArr[0]);
+        let endPeriodRule = rrulestr(rulesArr[1]);
 
         let rruleSet = new RRuleSet();
         rruleSet.rrule(initPeriodRule);
         rruleSet.rrule(endPeriodRule);
-        var dates = rruleSet.between(new Date(from), new Date(Wto));
+        var dates = rruleSet.all();
     }
 
     //Sorting dates
