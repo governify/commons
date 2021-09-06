@@ -7,7 +7,7 @@ const rrulestr = require('rrule').rrulestr
  *  @param {String} wPeriod, period of a window
  *  @return {Object} that represents the period of the window in rrule format
  **/
- function getFreq(Wperiod) {
+function getFreq(Wperiod) {
     switch (Wperiod) {
         case "yearly": return RRule.YEARLY
         case "monthly": return RRule.MONTHLY
@@ -54,11 +54,22 @@ function getTimeZoneOffset(date, timeZone) {
  * @param {Set} dates set of dates
  * @param {String} timeZone agreement's time zone
  * @param {Boolean} filter to filter by division or not
+ * @param {Date} Wfrom that indicates the initial of the window
+ * @param {Date} Wto that indicates the end of the window
  * @return {Set} set of periods
  * @alias module:gPeriods.getPeriods
  **/
 module.exports.getPeriods = function getPeriods(dates, timeZone, filter, Wfrom, Wto) {
     let periods = [];
+
+    if (dates.length !== 0 && !filter) {
+        var lastDate = dates[dates.length - 1]
+        lastDate.setUTCHours(lastDate.getUTCHours() + getTimeZoneOffset(lastDate, timeZone))
+        periods.push({
+            from: lastDate.toISOString(),
+            to: new Date().toISOString()
+        });
+    }
 
     for (var i = 0; i < dates.length - 1; i += 2) {
         dates[i + 1].setMilliseconds(999)
@@ -78,16 +89,7 @@ module.exports.getPeriods = function getPeriods(dates, timeZone, filter, Wfrom, 
             });
         }
     }
-
-    if (dates.length !== 0 && !filter) {
-        var lastDate = dates[dates.length - 1]
-        lastDate.setUTCHours(lastDate.getUTCHours() + getTimeZoneOffset(lastDate, timeZone))
-        periods.push({
-            from: lastDate.toISOString(),
-            to: new Date().toISOString()
-        });
-    }
-
+    
     return periods;
 }
 
@@ -100,7 +102,7 @@ module.exports.getPeriods = function getPeriods(dates, timeZone, filter, Wfrom, 
  * @return {Set} set of dates
  * @alias module:gPeriods.getDates
  **/
-module.exports.getDates = function getDates(from, to, period, Wto) {
+module.exports.getDates = function getDates(from, to, period, Wto, rules) {
     const periodTypes = ['yearly', 'monthly', 'weekly', 'daily', 'hourly'];
 
     if (periodTypes.indexOf(period) >= 0) {
@@ -122,7 +124,7 @@ module.exports.getDates = function getDates(from, to, period, Wto) {
         var dates = rruleSet.all();
     } else if (period === "customRules") {
         let rulesArr = rules.split("---");
-        const until = ";UNTIL=" + Wto.toISOString().replace(/\./g, "").replace(/\-/g, "").replace(/\:/g, "").substring(0, 15) + "Z"
+        const until = ";UNTIL=" + Wto.toISOString().replace(/\./g,"").replace(/\-/g,"").replace(/\:/g,"").substring(0,15) + "Z" 
         rulesArr[0] = rulesArr[0] + until
         rulesArr[1] = rulesArr[1] + until
         let initPeriodRule = rrulestr(rulesArr[0]);
@@ -140,4 +142,42 @@ module.exports.getDates = function getDates(from, to, period, Wto) {
     });
 
     return dates;
+}
+
+/**
+ * This method get the last period of a guarantee's window
+ * @param {Date} from start of dates
+ * @param {Date} to end of dates
+ * @param {Date} Wto end of window
+ * @param {String} period type of period
+ * @param {String} rules rrules to calculate the last period
+ * @param {String} timeZone agreement's time zone
+ * @return {Object} the last period 
+ * @alias module:gPeriods.getLastPeriod
+ **/
+module.exports.getLastPeriod = function getLastPeriod(from, to, period, Wto, rules,timeZone) {
+    const periodTypes = ['yearly', 'monthly', 'weekly', 'daily', 'hourly'];
+
+    if (periodTypes.indexOf(period) >= 0) {
+        let rruleInit = new RRule({
+            freq: getFreq(period),
+            dtstart: from,
+            until: to
+        });
+        var dates = rruleInit.all();
+    } else if (period === "customRules") {
+        let rulesArr = rules.split("---");
+        const until = ";UNTIL=" + Wto.toISOString().replace(/\./g,"").replace(/\-/g,"").replace(/\:/g,"").substring(0,15) + "Z";
+        rulesArr[0] = rulesArr[0] + until;
+        let initPeriodRule = rrulestr(rulesArr[0]);
+
+        let rruleSet = new RRuleSet();
+        rruleSet.rrule(initPeriodRule);
+        var dates = rruleSet.all();
+    }
+    dates[dates.length-1].setUTCHours(dates[dates.length-1].getUTCHours() + getTimeZoneOffset(dates[dates.length-1], timeZone));
+    return {
+        from: dates[dates.length-1].toISOString(),
+        to: Wto.toISOString()
+    };
 }
