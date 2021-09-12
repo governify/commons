@@ -27,6 +27,7 @@
     "lodash": "^4.17.21",
     "mustache": "^4.2.0",
     "require-from-string": "^2.0.2",
+    "rrule": "^2.6.8",
     "supports-color": "^7.1.0",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.5",
