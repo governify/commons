@@ -12,7 +12,12 @@ function appendCommonsLog(logTag, method, URL, responseStatus) {
         let logMsg = '[' + logTag + '] ' + serviceName + ' => ' + '[' + method + ']' + ' => ' + URL + ' => ' + responseStatus + '\n';
         axios.patch(governify.infrastructure.getServiceURL('internal.assets') + '/api/v1/public/logs/commons.log',
             { operation: 'append', content: logMsg}
-        ).catch(); // Do not log catch to avoid logging in case assets is not deployed
+        ).catch(async (err) => {
+            if (err.response?.status === 404){
+                axios.post(governify.infrastructure.getServiceURL('internal.assets') + '/api/v1/public/logs/commons.log?createDirectories=true','')
+                .catch(() => logger.error('Failed creating commons.log in assetsmanager'));
+            }
+        });
         logger.debug(logMsg)
     }
 

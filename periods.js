@@ -34,11 +34,11 @@ function getTimeZoneOffset(date, timeZone) {
     const year = map.get('year');
     const month = map.get('month');
     const day = map.get('day');
-    const hour = map.get('hour');
+    const hour = map.get('hour')%24;
     const minute = map.get('minute');
     const second = map.get('second');
     const ms = date.getMilliseconds().toString().padStart(3, '0');
-    const iso = `${year}-${month}-${day}T${hour}:${minute}:${second}.${ms}`;
+    const iso = `${year}-${month}-${day}T${("0" + hour).slice(-2)}:${minute}:${second}.${ms}`;
 
     // Tell to the Date object constructor that it's a UTC time, but it's not.
     const lie = new Date(iso + 'Z');
