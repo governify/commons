@@ -1,6 +1,6 @@
 {
   "name": "governify-commons",
-  "version": "1.16.1",
+  "version": "1.16.2",
   "description": "Governify Commons used for Governify microservices",
   "main": "index.js",
   "scripts": {
