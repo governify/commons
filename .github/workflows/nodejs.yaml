@@ -50,7 +50,7 @@ jobs:
           node-version: '14.x'
           registry-url: 'https://registry.npmjs.org'
       - run: npm install
-      - run: npm version minor --git-tag-version false
+      - run: npm version minor -m 'Governify Commons version %s released'
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -67,7 +67,7 @@ jobs:
           node-version: '14.x'
           registry-url: 'https://registry.npmjs.org'
       - run: npm install
-      - run: npm version patch --git-tag-version false
+      - run: npm version patch -m 'Governify Commons version %s released'
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
