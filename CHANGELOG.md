@@ -1,4 +1,13 @@
-# 1.17.0 (2021-09-23)
+## [1.17.1](https://github.com/governify/commons/compare/v1.17.0...v1.17.1) (2021-09-23)
+
+
+### Bug Fixes
+
+* Fixed CI to publish to npm ([9260ac5](https://github.com/governify/commons/commit/9260ac5f94f02aea22f3368b69ebf9f388d0f58b))
+
+
+
+# [1.17.0](https://github.com/governify/commons/compare/df906c436502e91f87878ab7f13fc5447a2331d2...v1.17.0) (2021-09-23)
 
 
 ### Bug Fixes
