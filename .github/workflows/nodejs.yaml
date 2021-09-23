@@ -38,7 +38,7 @@ jobs:
 #          github-token: ${{ secrets.GITHUB_TOKEN }}
 #        env:
 #          CI: true
-  npmRelease:
+  npmReleaseMain:
     name: Publish new release to npm registry
     runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push'}}
@@ -50,9 +50,24 @@ jobs:
           node-version: '14.x'
           registry-url: 'https://registry.npmjs.org'
       - run: npm install
+      - run: npm version minor --git-tag-version false
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: git push
+  npmReleaseDev:
+    name: Publish new release to npm registry
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/develop' && github.event_name == 'push'}}
+    needs: test
+    steps:
+      - uses: actions/checkout@v2
+      - run: npm install
+      - run: npm version patch --git-tag-version false
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: git push
   githubRelease:
     name: Release new version to GitHub
     runs-on: ubuntu-latest
