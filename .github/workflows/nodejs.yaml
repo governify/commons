@@ -45,12 +45,16 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v2
+      - name: git config
+        run: |
+          git config user.name $GITHUB_ACTOR
+          git config user.email gh-actions-${GITHUB_ACTOR}@github.com
       - uses: actions/setup-node@v2
         with:
           node-version: '14.x'
           registry-url: 'https://registry.npmjs.org'
       - run: npm install
-      - run: npm version minor -m 'Governify Commons version %s released'
+      - run: npm version minor -m "Governify Commons version %s released"
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -62,12 +66,16 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v2
+      - name: git config
+        run: |
+          git config user.name $GITHUB_ACTOR
+          git config user.email gh-actions-${GITHUB_ACTOR}@github.com
       - uses: actions/setup-node@v2
         with:
           node-version: '14.x'
           registry-url: 'https://registry.npmjs.org'
       - run: npm install
-      - run: npm version patch -m 'Governify Commons version %s released'
+      - run: npm version patch -m "Governify Commons version %s released"
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
