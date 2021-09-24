@@ -41,7 +41,7 @@ jobs:
   npmReleaseMain:
     name: (Main) Publish new release to npm registry
     runs-on: ubuntu-latest
-    if: false #${{ github.ref == 'refs/heads/main' && github.event_name == 'push'}}
+    if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push'}}
     needs: test
     steps:
       - uses: actions/checkout@v2
@@ -54,7 +54,7 @@ jobs:
           node-version: '14.x'
           registry-url: 'https://registry.npmjs.org'
       - run: npm install
-      - run: npm version minor -m "Governify Commons version %s released"
+      - run: npm version patch -m "Governify Commons version %s released"
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -76,14 +76,14 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: npm install
       - run: npm version patch -m "Governify Commons version %s released"
-#      - run: npm publish
-#       env:
-#          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: npm publish
+       env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: git push
   githubRelease:
     name: Release new version to GitHub
     runs-on: ubuntu-latest
-    if: false #${{ github.ref == 'refs/heads/main' && github.event_name == 'push'}}
+    if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push'}}
     needs: npmReleaseMain
     steps:
       - uses: actions/checkout@v2    
