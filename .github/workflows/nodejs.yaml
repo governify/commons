@@ -77,8 +77,8 @@ jobs:
       - run: npm install
       - run: npm version patch -m "Governify Commons version %s released"
       - run: npm publish
-       env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        env:
+            NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: git push
   githubRelease:
     name: Release new version to GitHub
