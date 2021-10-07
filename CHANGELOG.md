@@ -1,3 +1,12 @@
+## [1.17.5](https://github.com/governify/commons/compare/v1.17.4...v1.17.5) (2021-10-07)
+
+
+### Bug Fixes
+
+* infrastructure mustache parsing ([928bf5f](https://github.com/governify/commons/commit/928bf5f547a7f542e6a082f95058ac397daf324a))
+
+
+
 ## [1.17.4](https://github.com/governify/commons/compare/v1.17.2...v1.17.4) (2021-10-07)
 
 
