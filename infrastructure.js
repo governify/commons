@@ -29,6 +29,7 @@ async function loadServices() {
         let newInfrastructure = await governify.utils.loadObjectFromFileOrURL(infrastructureLocation);
         replaceObjectDefaults(newInfrastructure);
         infrastructure = JSON.parse(mustache.render(JSON.stringify(newInfrastructure), process.env, {}, ['$_[', ']']));
+        infrastructure = JSON.parse(mustache.render(JSON.stringify(infrastructure), infrastructure));
         logger.info('Successfully loaded infrastructure file')
     } catch (err) {
         return Promise.reject(err)
