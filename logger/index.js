@@ -36,7 +36,7 @@ let logConfig = {
     tracing: true,
     timestamp: true,
     tags: true,
-    level: LogLevel.DEBUG,
+    level: LogLevel.INFO,
     storage: {
         active: false,
         level: LogLevel.DEBUG
