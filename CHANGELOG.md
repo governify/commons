@@ -1,3 +1,15 @@
+## [1.17.4](https://github.com/governify/commons/compare/v1.17.2...v1.17.4) (2021-10-07)
+
+
+### Bug Fixes
+
+* Infrastructure not being rendered by mustache ([dbf94f6](https://github.com/governify/commons/commit/dbf94f6c979a411fe4d87d2839a019c0e4775221))
+* optional chaining fix for < Node 14 ([84f35a8](https://github.com/governify/commons/commit/84f35a8989b85208298a509dfd35e37ea00cef92))
+* Set default logging level to INFO ([b5e1804](https://github.com/governify/commons/commit/b5e1804995a3651de50b9c217a0671b10f6f46ab))
+* set prerelease version before npm install ([eb96c81](https://github.com/governify/commons/commit/eb96c81e2b8361db95c514ef00eb5d77ce593d71))
+
+
+
 ## [1.17.2](https://github.com/governify/commons/compare/v1.17.1...v1.17.2) (2021-09-24)
 
 
