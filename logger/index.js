@@ -2,6 +2,8 @@ const chalk = require('chalk');
 const governify = require('../index');
 const { createLogger, format, transports } = require('winston');
 const { combine, timestamp, printf  } = format;
+const fs = require('fs');
+let servicePackage = JSON.parse(fs.readFileSync('./package.json'));
 require('winston-daily-rotate-file');
 
 function Logger(tags = []) {
@@ -39,11 +41,11 @@ let logConfig = {
     level: LogLevel.INFO,
     storage: {
         active: false,
-        level: LogLevel.DEBUG
+        level: LogLevel.INFO
     }
 }
 
-let sizeMaxMB = 100;
+let sizeMaxMB = 10;
 let nFiles = 15;
 
 const fileLogger = createLogger({
@@ -166,7 +168,7 @@ function setLogConfig(newConfig){
         fileLogger.clear();
         const files = new transports.DailyRotateFile({
             filename: 'logs-%DATE%.log',
-            dirname:'./logs',
+            dirname:`./logs/${servicePackage.name}`,
             datePattern: 'YYYY-MM-DD',
             maxSize:sizeMaxMB + 'm', 
             maxFiles:nFiles, 
