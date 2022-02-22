@@ -3,7 +3,7 @@ const governify = require('../index');
 const { createLogger, format, transports } = require('winston');
 const { combine, timestamp, printf  } = format;
 const fs = require('fs');
-let servicePackage = JSON.parse(fs.readFileSync(__dirname + '/../../../package.json'));
+let servicePackage = JSON.parse(fs.readFileSync(__dirname + '/../package.json'));
 require('winston-daily-rotate-file');
 
 function Logger(tags = []) {

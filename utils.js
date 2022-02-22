@@ -3,7 +3,7 @@ const YAML = require('yaml');
 const fs = require('fs');
 const governify = require('./index');
 var requireFromString = require('require-from-string');
-const package = JSON.parse(fs.readFileSync(__dirname + '/../../package.json'));
+const package = JSON.parse(fs.readFileSync(__dirname + '/package.json'));
 
 
 module.exports = {
