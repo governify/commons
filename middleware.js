@@ -1,8 +1,8 @@
 const httpClient = require('./httpClient');
 const infrastructure = require('./infrastructure');
-const package = require('./package.json');
+const package = require(__dirname + '/package.json');
 const fs = require('fs');
-let servicePackage = JSON.parse(fs.readFileSync('./package.json'));
+let servicePackage = JSON.parse(fs.readFileSync(__dirname + '/package.json'));
 const express = require('express');
 const tracer = require('./tracer');
 const governify = require('./index');

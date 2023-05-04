@@ -176,8 +176,13 @@ module.exports.getLastPeriod = function getLastPeriod(from, to, period, Wto, rul
         var dates = rruleSet.all();
     }
     dates[dates.length-1].setUTCHours(dates[dates.length-1].getUTCHours() + getTimeZoneOffset(dates[dates.length-1], timeZone));
+
+    let WFrom = dates[dates.length-1]
+
+    if( Wto < WFrom) Wto.setDate(WFrom.getDate() + 1)
+
     return {
-        from: dates[dates.length-1].toISOString(),
+        from: WFrom.toISOString(),
         to: Wto.toISOString()
     };
 }
