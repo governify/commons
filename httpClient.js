@@ -26,11 +26,12 @@ function appendCommonsLog(logTag, method, URL, responseStatus) {
 module.exports = async function (config) {
     return axios(config).then(response => {
         appendCommonsLog('HTTPRequest OK', config.method, config.url, response.status);
+        logger.debug('HTTP Request OK with config: ', JSON.stringify(config));
         return response;
     }).catch(err => {
         let status = (err && err.response) ? err.response.status : 'No error response';
         appendCommonsLog('HTTPRequest FAIL', config.method, config.url, status);
-        logger.error('Failed when calling service from Governify with config:', config)
+        logger.error('Failed when calling service from Governify with config:', JSON.stringify(config))
         throw err;
     });
 }
@@ -38,11 +39,12 @@ module.exports = async function (config) {
 module.exports.request = async function request(config) {
     return axios.request(config).then(response => {
         appendCommonsLog('HTTPRequest OK', config.method, config.url, response.status);
+        logger.debug('HTTP Request OK (' + config.method + ') with config: ', JSON.stringify(config));
         return response;
     }).catch(err => {
         let status = (err && err.response) ? err.response.status : 'No error response';
         appendCommonsLog('HTTPRequest FAIL', config.method, config.url, status);
-        logger.error('Failed when calling service from Governify with config:', config)
+        logger.error('Failed when calling service from Governify with config:', JSON.stringify(config))
         throw err;
     });
 }
@@ -50,11 +52,12 @@ module.exports.request = async function request(config) {
 module.exports.get = async function get(url, config = {}) {
     return axios.get(url, config).then(response => {
         appendCommonsLog('HTTPRequest OK', 'GET', url, response.status);
+        logger.debug('HTTP Request OK (GET) with config: ', JSON.stringify(config));
         return response;
     }).catch(err => {
         let status = (err && err.response) ? err.response.status : 'No error response';
         appendCommonsLog('HTTPRequest FAIL', 'GET', url, status);
-        logger.error('Failed when calling service from Governify: ', url, ' with config:', config)
+        logger.error('Failed when calling service from Governify: ', url, ' with config:', JSON.stringify(config))
         throw err;
     });
 }
@@ -62,11 +65,12 @@ module.exports.get = async function get(url, config = {}) {
 module.exports.delete = async function deleteF(url, config = {}) {
     return axios.deleteF(url, config).then(response => {
         appendCommonsLog('HTTPRequest OK', 'DELETE', url, response.status);
+        logger.debug('HTTP Request OK (DELETE) with config: ', JSON.stringify(config));
         return response;
     }).catch(err => {
         let status = (err && err.response) ? err.response.status : 'No error response';
         appendCommonsLog('HTTPRequest FAIL', 'DELETE', url, status);
-        logger.error('Failed when calling service from Governify: ', url, ' with config:', config)
+        logger.error('Failed when calling service from Governify: ', url, ' with config:', JSON.stringify(config))
         throw err;
     });
 }
@@ -74,11 +78,12 @@ module.exports.delete = async function deleteF(url, config = {}) {
 module.exports.head = async function head(url, config = {}) {
     return axios.head(url, config).then(response => {
         appendCommonsLog('HTTPRequest OK', 'HEAD', url, response.status);
+        logger.debug('HTTP Request OK (HEAD) with config: ', JSON.stringify(config));
         return response;
     }).catch(err => {
         let status = (err && err.response) ? err.response.status : 'No error response';
         appendCommonsLog('HTTPRequest FAIL', 'HEAD', url, status);
-        logger.error('Failed when calling service from Governify: ', url, ' with config:', config)
+        logger.error('Failed when calling service from Governify: ', url, ' with config:', JSON.stringify(config))
         throw err;
     });
 }
@@ -86,11 +91,12 @@ module.exports.head = async function head(url, config = {}) {
 module.exports.options = async function options(url, config = {}) {
     return axios.options(url, config).then(response => {
         appendCommonsLog('HTTPRequest OK', 'OPTIONS', url, response.status);
+        logger.debug('HTTP Request OK (OPTIONS) with config: ', JSON.stringify(config));
         return response;
     }).catch(err => {
         let status = (err && err.response) ? err.response.status : 'No error response';
         appendCommonsLog('HTTPRequest FAIL', 'OPTIONS', url, status);
-        logger.error('Failed when calling service from Governify: ', url, ' with config:', config)
+        logger.error('Failed when calling service from Governify: ', url, ' with config:', JSON.stringify(config))
         throw err;
     });
 }
@@ -98,11 +104,12 @@ module.exports.options = async function options(url, config = {}) {
 module.exports.post = async function post(url, data = {}, config = {}) {
     return axios.post(url, data, config).then(response => {
         appendCommonsLog('HTTPRequest OK', 'POST', url, response.status);
+        logger.debug('HTTP Request OK (POST) with config: ', JSON.stringify(config));
         return response;
     }).catch(err => {
         let status = (err && err.response) ? err.response.status : 'No error response';
         appendCommonsLog('HTTPRequest FAIL', 'POST', url, status);
-        logger.error('Failed when calling service from Governify: ', url, ' with config:', config)
+        logger.error('Failed when calling service from Governify: ', url, ' with config:', JSON.stringify(config))
         throw err;
     });
 }
@@ -110,11 +117,12 @@ module.exports.post = async function post(url, data = {}, config = {}) {
 module.exports.put = async function put(url, data = {}, config = {}) {
     return axios.put(url, data, config).then(response => {
         appendCommonsLog('HTTPRequest OK', 'PUT', url, response.status);
+        logger.debug('HTTP Request OK (PUT) with config: ', JSON.stringify(config));
         return response;
     }).catch(err => {
         let status = (err && err.response) ? err.response.status : 'No error response';
         appendCommonsLog('HTTPRequest FAIL', 'PUT', url, status);
-        logger.error('Failed when calling service from Governify: ', url, ' with config:', config)
+        logger.error('Failed when calling service from Governify: ', url, ' with config:', JSON.stringify(config))
         throw err;
     });
 }
@@ -122,11 +130,12 @@ module.exports.put = async function put(url, data = {}, config = {}) {
 module.exports.patch = async function patch(url, data = {}, config = {}) {
     return axios.patch(url, data, config).then(response => {
         appendCommonsLog('HTTPRequest OK', 'PATCH', url, response.status);
+        logger.debug('HTTP Request OK (PATCH) with config: ', JSON.stringify(config));
         return response;
     }).catch(err => {
         let status = (err && err.response) ? err.response.status : 'No error response';
         appendCommonsLog('HTTPRequest FAIL', 'PATCH', url, status);
-        logger.error('Failed when calling service from Governify: ', url, ' with config:', config)
+        logger.error('Failed when calling service from Governify: ', url, ' with config:', JSON.stringify(config))
         throw err;
     });
 }
