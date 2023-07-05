@@ -33,15 +33,17 @@ const LogLevel = {
     FATAL: 5,
 }
 
+const logLevelEnv = LogLevel[process.env.GOV_LOG_LEVEL?.toUpperCase()] ?? LogLevel.INFO;
+
 let logConfig = {
     type: true,
     tracing: true,
     timestamp: true,
     tags: true,
-    level: LogLevel.INFO,
+    level: logLevelEnv,
     storage: {
-        active: false,
-        level: LogLevel.INFO
+        active: process.env.GOV_LOG_STORAGE ?? false,
+        level: LogLevel[process.env.GOV_LOG_STORAGE_LEVEL?.toUpperCase()] ?? (logLevelEnv ?? LogLevel.INFO)
     }
 }
 
