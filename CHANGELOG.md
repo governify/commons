@@ -1,3 +1,12 @@
+# [1.19.0](https://github.com/governify/commons/compare/v1.18.0...v1.19.0) (2023-07-05)
+
+
+### Features
+
+* log level env variable ([361fb03](https://github.com/governify/commons/commit/361fb03eb28beb619bd1210eb1326f3b53ebf1dd))
+
+
+
 # [1.18.0](https://github.com/governify/commons/compare/v1.17.5...v1.18.0) (2023-05-04)
 
 
