@@ -1,3 +1,12 @@
+# [1.21.0](https://github.com/governify/commons/compare/v1.19.0...v1.21.0) (2025-05-20)
+
+
+### Features
+
+* **logger:** add MongoDB transport ([b861a17](https://github.com/governify/commons/commit/b861a17a21b55d53ec226cb4f94fe092544f903a))
+
+
+
 # [1.19.0](https://github.com/governify/commons/compare/v1.18.0...v1.19.0) (2023-07-05)
 
 
