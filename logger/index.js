@@ -5,6 +5,7 @@ const { combine, timestamp, printf  } = format;
 const fs = require('fs');
 let servicePackage = JSON.parse(fs.readFileSync(__dirname + '/../package.json'));
 require('winston-daily-rotate-file');
+const MongoTransport = require('./mongo-transport');
 
 function Logger(tags = []) {
     this.tags = tags || [];
@@ -12,10 +13,10 @@ function Logger(tags = []) {
 
 const myFormat = printf(({ level, message, tracing, label, timestamp }) => {
     return `${JSON.stringify({date: timestamp, level: level,trace: tracing, labels: label, msg: message})}`;
-  });
+});
 
 const cloneInstance = (logger) =>{
-    return new Logger([...logger.tags]); //Clone the array to let the original unmodified
+    return new Logger([...logger.tags]); //Clone the array to leave the original unmodified
 }
 
 const LogType = {
@@ -44,6 +45,11 @@ let logConfig = {
     storage: {
         active: process.env.GOV_LOG_STORAGE ?? false,
         level: LogLevel[process.env.GOV_LOG_STORAGE_LEVEL?.toUpperCase()] ?? (logLevelEnv ?? LogLevel.INFO)
+    },
+    mongodb: {
+        active: process.env.GOV_LOG_MONGODB_ENABLED === 'true' || false,
+        uri: process.env.GOV_LOG_MONGODB_URI || 'mongodb://root:root@localhost:27017/logs?authSource=admin',
+        level: LogLevel[process.env.GOV_LOG_MONGODB_LEVEL?.toUpperCase()] ?? (logLevelEnv ?? LogLevel.INFO)
     }
 }
 
@@ -54,8 +60,17 @@ const fileLogger = createLogger({
     format: combine(
         timestamp(),
         myFormat
-      )
-  });
+    )
+});
+
+if (logConfig.mongodb.active) {
+    MongoTransport.initialize(logConfig.mongodb, servicePackage.name)
+        .then(success => {
+            if (success) {
+                fileLogger.add(MongoTransport.createTransport(servicePackage.name));
+            }
+        });
+}
 
 Logger.prototype.addPermanentTags = function(tags){
     if (!(tags instanceof Array)){
@@ -66,8 +81,10 @@ Logger.prototype.addPermanentTags = function(tags){
 }
 
 Logger.prototype.debug = function(...msg){
-
     if (logConfig.storage.active && LogLevel.DEBUG >= logConfig.storage.level){ 
+        fileLogger.debug(this.getWinstonMessage(...msg));
+    }
+    if (logConfig.mongodb.active && LogLevel.DEBUG >= logConfig.mongodb.level) {
         fileLogger.debug(this.getWinstonMessage(...msg));
     }
     if (LogLevel.DEBUG < logConfig.level){
@@ -77,8 +94,10 @@ Logger.prototype.debug = function(...msg){
 }
 
 Logger.prototype.info = function(...msg) {
-
     if (logConfig.storage.active && LogLevel.INFO >= logConfig.storage.level){ 
+        fileLogger.info(this.getWinstonMessage(...msg));
+    }
+    if (logConfig.mongodb.active && LogLevel.INFO >= logConfig.mongodb.level) {
         fileLogger.info(this.getWinstonMessage(...msg));
     }
     if (LogLevel.INFO < logConfig.level){
@@ -88,8 +107,10 @@ Logger.prototype.info = function(...msg) {
 }
 
 Logger.prototype.error = function(...msg) {
-
     if (logConfig.storage.active && LogLevel.ERROR >= logConfig.storage.level){ 
+        fileLogger.error(this.getWinstonMessage(...msg));
+    }
+    if (logConfig.mongodb.active && LogLevel.ERROR >= logConfig.mongodb.level) {
         fileLogger.error(this.getWinstonMessage(...msg));
     }
     if (LogLevel.ERROR < logConfig.level){
@@ -99,8 +120,10 @@ Logger.prototype.error = function(...msg) {
 }
 
 Logger.prototype.warn = function(...msg) {
-
     if (logConfig.storage.active && LogLevel.WARN >= logConfig.storage.level){ 
+        fileLogger.warn(this.getWinstonMessage(...msg));
+    }
+    if (logConfig.mongodb.active && LogLevel.WARN >= logConfig.mongodb.level) {
         fileLogger.warn(this.getWinstonMessage(...msg));
     }
     if (LogLevel.WARN < logConfig.level){
@@ -110,8 +133,10 @@ Logger.prototype.warn = function(...msg) {
 }
 
 Logger.prototype.fatal = function(...msg) {
-
     if (logConfig.storage.active && LogLevel.FATAL >= logConfig.storage.level){ 
+        fileLogger.error(this.getWinstonMessage(...msg));
+    }
+    if (logConfig.mongodb.active && LogLevel.FATAL >= logConfig.mongodb.level) {
         fileLogger.error(this.getWinstonMessage(...msg));
     }
     if (LogLevel.FATAL < logConfig.level){
@@ -145,7 +170,6 @@ Logger.prototype.getMessageFormatted = function(type, ...msg) {
     return finalMsg;
 }
 
-
 const Theme = {
     TRACEID: chalk.hex("#606C38"),
     INFO: chalk.hex("#0077B6"),
@@ -158,14 +182,12 @@ const Theme = {
     DEFAULT: chalk.white()
 }
 
-
-
 function getLogConfig(){
     return logConfig;
 }
 
 function setLogConfig(newConfig){
-
+    // Handle file storage config changes
     if((newConfig.storage.active &&  newConfig.storage.active !== logConfig.storage.active)){
         fileLogger.clear();
         const files = new transports.DailyRotateFile({
@@ -175,13 +197,35 @@ function setLogConfig(newConfig){
             maxSize:sizeMaxMB + 'm', 
             maxFiles:nFiles, 
             level:'debug'
-            });
+        });
         fileLogger.add(files); 
+    }
+    
+    // Handle MongoDB config changes
+    if (newConfig.mongodb.active !== logConfig.mongodb.active || 
+        (newConfig.mongodb.active && newConfig.mongodb.uri !== logConfig.mongodb.uri)) {
+        
+        // Reconfigure MongoDB
+        MongoTransport.initialize(newConfig.mongodb, servicePackage.name)
+            .then(success => {
+                if (success) {
+                    // Remove existing transport if any
+                    fileLogger.transports.forEach((transport, i) => {
+                        if (transport.name === 'mongodb') {
+                            fileLogger.transports.splice(i, 1);
+                        }
+                    });
+                    
+                    // Add new transport if enabled
+                    if (newConfig.mongodb.active) {
+                        fileLogger.add(MongoTransport.createTransport(servicePackage.name));
+                    }
+                }
+            });
     }
 
     logConfig = newConfig;
 }
-
 
 function coloredTraceId() {
     return Theme.TRACEID("[" + governify.tracer.getCurrentTraceShortId() + "] ");
@@ -205,9 +249,51 @@ function coloredType(type) {
 }
 
 Logger.prototype.getWinstonMessage = function (...msg) {
-    return {label:this.tags,tracing:governify.tracer.getCurrentTraceShortId(),message:msg.toString()}
+    // Process the message to extract useful information
+    const message = msg.join(' ');
+    
+    // Convert tags to expected format
+    const tags = this.tags || [];
+    
+    // Detect if it's an HTTP error message
+    let statusCode = null;
+    let url = null;
+    
+    if (message.includes('Failed when calling service from Governify:')) {
+        // Extract HTTP error information if available
+        const urlMatch = message.match(/https?:\/\/[^\s]+/);
+        if (urlMatch) {
+            url = urlMatch[0].trim();
+            
+            // Add http-request tag if it doesn't already exist
+            if (!tags.includes('http-request')) {
+                tags.push('http-request');
+            }
+            
+            // Try to extract status code if present in the message
+            const statusMatch = message.match(/status(?:Code)?[:\s]+(\d+)/i);
+            if (statusMatch && statusMatch[1]) {
+                statusCode = parseInt(statusMatch[1], 10);
+            }
+        }
+    }
+    
+    return {
+        label: tags,
+        tracing: governify.tracer.getCurrentTraceShortId(),
+        message: message,
+        statusCode: statusCode,
+        url: url
+    };
 }
+
+// Graceful shutdown to close connections
+process.on('SIGINT', async () => {
+    await MongoTransport.shutDown();
+    process.exit(0);
+});
 
 module.exports = Logger;
 module.exports.getLogConfig = getLogConfig;
 module.exports.setLogConfig = setLogConfig;
+module.exports.mongoTransport = MongoTransport;
