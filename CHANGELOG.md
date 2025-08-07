@@ -1,3 +1,12 @@
+## [1.21.1](https://github.com/governify/commons/compare/v1.21.0...v1.21.1) (2025-08-07)
+
+
+### Bug Fixes
+
+* remove extra space in log type formatting ([6227676](https://github.com/governify/commons/commit/622767650a00cc72c2b52ba7dc49ba577ed4bcb8))
+
+
+
 # [1.21.0](https://github.com/governify/commons/compare/v1.19.0...v1.21.0) (2025-05-20)
 
 
