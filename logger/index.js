@@ -236,11 +236,11 @@ function coloredType(type) {
         case LogType.DEBUG:
             return Theme.DEBUG("[" + type + "] ")
         case LogType.INFO:
-            return Theme.INFO("[" + type + " ] ")
+            return Theme.INFO("[" + type + "] ")
         case LogType.ERROR:
             return Theme.ERROR("[" + type + "] ")
         case LogType.WARN:
-            return Theme.WARN("[" + type + " ] ")
+            return Theme.WARN("[" + type + "] ")
         case LogType.FATAL:
             return Theme.FATAL("[" + type + "] ")
         default:
